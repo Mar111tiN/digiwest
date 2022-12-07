@@ -9,7 +9,3 @@ tables_path <- file.path(output_path, "tables")
 dir.create(img_path, showWarnings = FALSE)
 config_path <- file.path(base_path, "code/config")
 R_path <- file.path(base_path, "code/R")
-
-
-
-
