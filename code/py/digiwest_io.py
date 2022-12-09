@@ -42,7 +42,7 @@ def extract_data(excel_file, *, sheet="", config, **kwargs):
     if ec['remove_zz']: # remove zz
         df = df.loc[~df['Protein'].str.startswith("zz"), :]
     # count percentage of NA == 33 values
-    df.loc[:, 'NA'] = df.groupby('Analyte')['MFI'].transform(lambda x: sum(x == 33) / sum(x >0))
+    df.loc[:, 'NAvalues'] = df.groupby('Analyte')['MFI'].transform(lambda x: sum(x == 33) / sum(x >0))
     # concat column info
 
     # recollect the Analyte Info into Analyte
@@ -79,7 +79,7 @@ def extract_data(excel_file, *, sheet="", config, **kwargs):
         else:
             df[fct] = pd.Categorical(df[fct], factor_levels[fct])
     df['Sample'] = df['Sample'].str.strip("_")
-    cols = ['Sample'] + sample_cols + ['Analyte', 'Protein', 'Phospho', 'Peak', 'NA', 'MFI']    
+    cols = ['Sample'] + sample_cols + ['Analyte', 'Protein', 'Phospho', 'Peak', 'NAvalues', 'MFI']    
     df = df.loc[:, cols].sort_values(sample_cols)   
     return df
 

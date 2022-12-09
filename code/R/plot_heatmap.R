@@ -24,7 +24,7 @@ filter_data <- function(
   ) { # nolint
     data <- df %>%
      # set the max fraction of 33 (NA) values
-        filter(`NA` < max_NA)
+        filter(NAvalues < max_NA)
     if (show_phospho_only) {
         data <- data %>%
             # only include phosphorylated
@@ -64,27 +64,47 @@ plot_digi_heatmap <- function(
     show_stims=c("unstim", "stim"),
     show_cytos=c("IL-2", "wo", "CXCL9", "CXCL10", "CXCL11"),
     heat_color = "heat",
-    cyto_colors = cyto_colors1,
-    stim_colors = stim_colors1,
-    pop_colors = pop_colors1,
+    anno_colors = sarah_colors,
     show_phospho_only=TRUE,
     show_extra_peak=FALSE,
+    show_data = list(
+        Pop = c(),
+        Stim = c(),
+        Cyto = c()
+        ),
+    hide_data = c(
+        list(Stim = "unstim", Cyto = "wo")
+        ),
     ...
   ) {
+    # reset the output
+    while (!is.null(dev.list()))  dev.off()
   #########################################
-    # filter for Cytos and Stims
-    dff <- dff %>%
-    filter(Cyto %in% show_cytos) %>%
-    filter(Stim %in% show_stims)
-    print(unique(dff$Cyto))
-    # reduce color annotations to filtered values
-    cyto_colors <- cyto_colors[intersect(names(cyto_colors), show_cytos)]
-    stim_colors <- stim_colors[intersect(names(stim_colors), show_stims)]
+    # filter for show_data entries
+    for (data in names(show_data)) {
+        # select for the filtered columns
+        dff <- dff %>% 
+            filter(.data[[data]] %in% show_data[[data]]) %>%
+            mutate({{data}} := factor(.data[[data]], levels = show_data[[data]]))
+        # reduce color annotations to filtered values
+        anno_colors[[data]] <- anno_colors[[data]][intersect(names(anno_colors[[data]]), show_data[[data]])]
+    }
+    # negatively filter for the hide_data items
+    for (hide_item in hide_data) {
+        # build the list of filter expressions for each data of this hidden item
+        filter_exprs <- c()
+        for (data in names(hide_item)) {
+            filter_exprs <- c(filter_exprs, str_glue("{data} == '{hide_item[[data]]}'"))
+        }
+        filter_expr_pre <- paste(filter_exprs, collapse = ' & ')
+        filter_expr <- str_glue("!({filter_expr_pre})")
+
+        # evaluate the filter_expr in the filter
+        dff <- dff %>% filter(rlang::eval_tidy(rlang::parse_expr(filter_expr)))
+    }
 
     # get the annotations into a dataframe
     # extract the row.info
-
- 
     if (show_phospho_only & !show_extra_peak) {
         # do not show any row info
         row.info=NA
@@ -112,6 +132,9 @@ plot_digi_heatmap <- function(
         }
     }
 
+    ### HARDCODED SORT
+    # dff <- dff %>%
+    #     arrange(Cells, Treatment, Donor)
     # if
     # extract the col.info
     col.info <- dff %>% 
@@ -138,14 +161,6 @@ plot_digi_heatmap <- function(
         }
     }
 
-    # define the colors for the annotation
-    ann_colors = list(
-      Cyto = cyto_colors,
-      Stim = stim_colors,
-      Pop = pop_colors
-    )
-
-
     # print(heat.mat)
       # call the heatmap function
     heat.map <- heat.mat %>%
@@ -153,7 +168,7 @@ plot_digi_heatmap <- function(
         color = heat_color,
         annotation_row = row.info,
         annotation_col = col.info,
-        annotation_colors = ann_colors,
+        annotation_colors = anno_colors,
         # passing defaults
         cutree_rows = cutree_rows,
         cutree_cols = cutree_cols,
@@ -193,7 +208,6 @@ digi_heatmap <- function(
         width <- figsize[[1]]
         height <- figsize[[2]]
     }
-
     plot <- plot_digi_heatmap(
         dff,
         filename=plot_file,

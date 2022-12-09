@@ -7,7 +7,6 @@ library(yaml)
 # ....c(list1, list2) updates duplicate entries with data from list2
 # 3) creates pop.levels and pop.colors from the pops list
 # 4) finally it calls the combined plot function with do.call and the list of arguments
-
 ### usually you might just need the simple yaml read and args <- list(...) but for nested and more complex configs
 # you will have to add some extra logic
 # source(file.path(R_path, "stat.R"))

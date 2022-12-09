@@ -18,3 +18,26 @@ pop_colors1 <- c(
     `Tem+Temra` = "orange",
     `Tnaive` = "gray"
 )
+
+Cell_colors1 <- c(
+    `non-Treg` = "white",
+    `Unt-Treg` = "blue",
+    `ko-Treg` = "#de6262"
+)
+
+Treatment_colors1 <- c(
+    Medium = "white",
+    Tac = "#de6262",
+    CSA = "darkred"
+)
+
+ghazal_colors <- list(
+    Cells = Cell_colors1,
+    Treatment = Treatment_colors1
+)
+
+sarah_colors = list(
+    Pop = pop_colors1,
+    Cyto = cyto_colors1,
+    Stim = stim_colors1
+)
