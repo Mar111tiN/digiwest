@@ -1,7 +1,7 @@
 library(tidyverse)
 library(readxl)
 
-##################################
+ ##################################
 ## SETUP #########################
 # Sys.getenv loads environment variables
 home <- Sys.getenv('HOME')
@@ -10,6 +10,7 @@ work <- Sys.getenv('WORK')
 
 # here set the repo path
 repo_path <- getwd()
+repo_path
 ###  LOAD CONFIG ###############
 source(file.path(hook,"setup.R"))
 load_config(file.path(repo_path, "config/test_config.yml"))
@@ -17,14 +18,14 @@ load_config(file.path(repo_path, "config/test_config.yml"))
 #######################################
 ######## EXECUTE ######################
 
-sarah.csv <- file.path(tables_path,"digi_test.csv")
-sarah.config <- file.path(config_path, "test_config.yml")
-plot_config <- read_yaml(sarah.config)$plot_heatmap
-df <- read_tsv(sarah.csv)
+test.csv <- file.path(tables_path,"digi_test.csv")
+test.config <- file.path(config_path, "test_config.yml")
+plot_config <- read_yaml(test.config)$plot_heatmap
+df <- read_tsv(test.csv)
 glimpse(df)
 
 (test <- digi_heatmap(
-  table_file=sarah.csv,
+  table_file=test.csv,
   plot_file=file.path(img_path, "test_img"),
   max_NA=0.9, 
   exclude_IL2 = T, 
