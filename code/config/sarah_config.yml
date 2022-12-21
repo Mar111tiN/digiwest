@@ -1,0 +1,112 @@
+---
+paths:
+    py_core:
+        - /Users/martinszyska/Sites/Bio/digiwest/code/py  # has to be an absolute path to external code base
+    # R_path: Sites/Bio/digiwest/code/R
+    R_core:
+        Sites/Bio/digiwest/code/R:
+            - utils.R
+    base_path: Dropbox/Icke/Work/DigiWest/DigiWestBioinfo  # abs or relative to home
+    # all paths belowe are absolute paths or relative to base_path
+    data_path: /Users/martinszyska/Dropbox/Icke/Work/DigiWest/data
+    output_path: output/Sarah
+    info_path: info
+    config_path: code/config
+    img_path: output/img
+    tables_path: output/tables
+extract_data:  # here are the configs for the "load_and_save function"
+    remove_zz: True
+    read_lines: 0
+    excel_sheet: RawData
+    format_analytes: True
+    factors:
+        Pop:
+            - Tnaive
+            - Tcm+Tscm
+            - Tem+Temra
+        Cyto:
+            - wo
+            - IL-2
+            - CXCL9
+            - CXCL10
+            - CXCL11
+        Stim:
+            - unstim
+            - stim
+    extract_pattern: (?P<Pop>[^,]+), (?:[^,]+), (?P<Stim>[^,]+), (?P<Cyto>[^,]+)
+normscale:
+    sample_cols: 
+        - Pop
+        - Stim
+        - Cyto
+    analyte_cols:
+        - Analyte
+        - Phospho
+        - Peak
+    norm2control:  # give the
+        WO:
+            data_cols:
+            - medMFI_sc
+            - logMFI_sc
+            norm_versus:
+                - Cyto: wo
+            operations:
+                - min
+        CXCL9:
+            data_cols:
+            - medMFI_sc
+            - logMFI_sc
+            norm_versus:
+                - Cyto: CXCL9
+            operations:
+                - min
+        CXCL10:
+            data_cols:
+            - medMFI_sc
+            - logMFI_sc
+            norm_versus:
+                - Cyto: CXCL10
+            operations:
+                - min
+plot_heatmap:
+    figsize: [7,7]
+    plot_type: png
+    max_NA: 0.9
+    data_col: logMFI_sc_minWO
+    main: Digiwest heatmap
+    heat_color: heat  # magma
+    fontsize_row: 10
+    cluster_cols: True
+    cluster_rows: True
+    cutree_rows: 3
+    cutree_cols: 3
+    treeheight_row: 17
+    treeheight_col: 17
+    show_colnames: False
+    row_info:
+        - Peak
+        - Phospho
+    show_phospho_only: True
+    show_extra_peak: False
+    col_info:
+        - Cyto
+        - Pop
+        - Stim
+    show_data:
+        Cyto: # make new exclude list
+            - IL-2
+            - wo
+            - CXCL9
+            - CXCL10
+            - CXCL11
+        Stim:
+            - unstim
+            - stim
+    hide_data:
+        -
+            Cyto: wo
+            Stim: unstim
+        # -
+        #     Cells: Unt-Treg
+        #     Treatment: Tac
+
